@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#F2F2F7">
+    <meta name="apple-mobile-web-app-title" content="ColorMyBattery">
+    <meta name="application-name" content="ColorMyBattery">
+    
+    <title>ColorMyBattery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            color: #000000;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* ── Fake Dynamic Island & Status Bar ── */
+        .status-bar {
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-weight: 600;
+            font-size: 14px;
+            position: relative;
+            z-index: 50;
+        }
+        .dynamic-island {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+            width: 105px;
+            height: 30px;
+            background-color: #000;
+            border-radius: 20px;
+            z-index: 1;
+        }
+
+        /* ── iOS Toggle Switch ── */
+        .ios-toggle {
+            position: relative;
+            width: 50px;
+            height: 30px;
+            appearance: none;
+            background: #e9e9ea;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            outline: none;
+        }
+        .ios-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .ios-toggle:checked { background: #34C759; }
+        .ios-toggle:checked::after { transform: translateX(20px); }
+
+        /* ── iOS Card Styling ── */
+        .ios-card {
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            margin: 0 16px;
+        }
+
+        /* ── Color Circles ── */
+        .color-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 16px 16px 16px;
+        }
+        
+        .color-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s;
+        }
+        .color-circle:active { transform: scale(0.9); }
+        
+        .color-circle.selected::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid #8E8E93;
+            border-radius: 50%;
+        }
+
+        /* ── Specific Colors ── */
+        .c-red { background-color: #FF3B30; }
+        .c-orange { background-color: #FF9500; }
+        .c-yellow { background-color: #FFCC00; }
+        .c-green { background-color: #34C759; }
+        .c-blue { background-color: #007AFF; }
+        .c-indigo { background-color: #5856D6; }
+        .c-pink { background-color: #FF2D55; }
+        .c-purple { background-color: #AF52DE; }
+        
+    </style>
+</head>
+<body>
+
+    <div class="status-bar pt-2">
+        <span id="clock" class="tracking-tight ml-2 z-10">7:44</span>
+        <div class="dynamic-island"></div>
+        <div class="flex items-center gap-[4px] text-black opacity-90 z-10">
+            <svg width="17" height="11" viewBox="0 0 18 12" fill="currentColor">
+                <rect x="1" y="8" width="3" height="4" rx="1"/>
+                <rect x="6" y="5" width="3" height="7" rx="1"/>
+                <rect x="11" y="2" width="3" height="10" rx="1"/>
+                <rect x="16" y="0" width="3" height="12" rx="1"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 12" fill="currentColor">
+                <path d="M8 12C8.82843 12 9.5 11.3284 9.5 10.5C9.5 9.67157 8.82843 9 8 9C7.17157 9 6.5 9.67157 6.5 10.5C6.5 11.3284 7.17157 12 8 12Z"/>
+                <path d="M12.0208 7.37868C10.958 6.31587 9.5391 5.75 8 5.75C6.4609 5.75 5.04203 6.31587 3.97918 7.37868C3.68629 7.67157 3.21142 7.67157 2.91853 7.37868C2.62564 7.08579 2.62564 6.61092 2.91853 6.31802C4.26941 4.96714 6.05922 4.25 8 4.25C9.94078 4.25 11.7306 4.96714 13.0815 6.31802C13.3744 6.61092 13.3744 7.08579 13.0815 7.37868C12.7886 7.67157 12.3137 7.67157 12.0208 7.37868Z"/>
+                <path d="M15.5563 3.84315C13.6277 1.91448 10.9061 0.85 8 0.85C5.09395 0.85 2.37233 1.91448 0.44365 3.84315C0.150757 4.13604 0.150757 4.61091 0.44365 4.90381C0.736543 5.1967 1.21142 5.1967 1.50431 4.90381C3.15655 3.25157 5.4859 2.35 8 2.35C10.5141 2.35 12.8434 3.25157 14.4957 4.90381C14.7886 5.1967 15.2635 5.1967 15.5563 4.90381C15.8492 4.61091 15.8492 4.13604 15.5563 3.84315Z"/>
+            </svg>
+            <div class="flex items-center ml-1">
+                <div id="batteryFill" style="width: 36px; height: 17px; background-color: #555555; border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: background-color 0.3s;">
+                    <span style="color: white; font-size: 11.5px; font-weight: 700; letter-spacing: -0.3px; line-height: 1; margin-top: 1px;">88</span>
+                </div>
+                <div id="batteryNub" style="width: 2.5px; height: 6px; background-color: #555555; opacity: 0.6; border-top-right-radius: 2px; border-bottom-right-radius: 2px; margin-left: 1px; transition: background-color 0.3s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center px-2 py-2 relative mt-2">
+        <button class="flex items-center text-[#007AFF] hover:opacity-70">
+            <i class="ri-arrow-left-s-line text-4xl"></i>
+        </button>
+        <h1 class="absolute left-1/2 transform -translate-x-1/2 font-semibold text-[17px] tracking-wide">ColorMyBattery</h1>
+    </div>
+
+    <div class="ios-card mt-3 p-3 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <i class="ri-apple-fill text-2xl"></i>
+            <span class="font-medium text-[16px]">Battery Color Customization</span>
+        </div>
+        <input type="checkbox" id="mainToggle" class="ios-toggle">
+    </div>
+
+    <div class="px-8 mt-3 mb-8">
+        <p class="text-[#8E8E93] text-[12px] leading-snug">You can customize the color of your iphone's battery.</p>
+        <p class="text-[#8E8E93] text-[12px] leading-snug">You can set various colors for various battery levels.</p>
+    </div>
+
+    <div class="mt-6">
+        <h3 class="text-[#8E8E93] font-medium text-[13px] mb-2 px-6 uppercase tracking-wide">Battery 20-50% Color</h3>
+        <div class="color-row" id="row1">
+            <div class="color-circle c-red"></div>
+            <div class="color-circle c-orange selected"></div>
+            <div class="color-circle c-yellow"></div>
+            <div class="color-circle c-green"></div>
+            <div class="color-circle c-blue"></div>
+            <div class="color-circle c-indigo"></div>
+            <div class="color-circle c-pink"></div>
+            <div class="color-circle c-purple"></div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <h3 class="text-[#8E8E93] font-medium text-[13px] mb-2 px-6 uppercase tracking-wide">Battery 50-80% Color</h3>
+        <div class="color-row" id="row2">
+            <div class="color-circle c-red"></div>
+            <div class="color-circle c-orange"></div>
+            <div class="color-circle c-yellow selected"></div>
+            <div class="color-circle c-green"></div>
+            <div class="color-circle c-blue"></div>
+            <div class="color-circle c-indigo"></div>
+            <div class="color-circle c-pink"></div>
+            <div class="color-circle c-purple"></div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <h3 class="text-[#8E8E93] font-medium text-[13px] mb-2 px-6 uppercase tracking-wide">Battery 80-100% Color</h3>
+        <div class="color-row" id="row3">
+            <div class="color-circle c-red"></div>
+            <div class="color-circle c-orange"></div>
+            <div class="color-circle c-yellow"></div>
+            <div class="color-circle c-green"></div>
+            <div class="color-circle c-blue selected"></div>
+            <div class="color-circle c-indigo"></div>
+            <div class="color-circle c-pink"></div>
+            <div class="color-circle c-purple"></div>
+        </div>
+    </div>
+
+    <div class="mt-2 pb-10">
+        <h3 class="text-[#8E8E93] font-medium text-[13px] mb-2 px-6 uppercase tracking-wide">Battery Charging Color</h3>
+        <div class="color-row" id="row4">
+            <div class="color-circle c-red"></div>
+            <div class="color-circle c-orange"></div>
+            <div class="color-circle c-yellow"></div>
+            <div class="color-circle c-green selected"></div>
+            <div class="color-circle c-blue"></div>
+            <div class="color-circle c-indigo"></div>
+            <div class="color-circle c-pink"></div>
+            <div class="color-circle c-purple"></div>
+        </div>
+    </div>
+
+    <script>
+        // ── Real-time Clock ──
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('clock').textContent = hours + ':' + minutes;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ── Color Map (Hex Codes) ──
+        const colorMap = {
+            'c-red': '#FF3B30',
+            'c-orange': '#FF9500',
+            'c-yellow': '#FFCC00',
+            'c-green': '#34C759',
+            'c-blue': '#007AFF',
+            'c-indigo': '#5856D6',
+            'c-pink': '#FF2D55',
+            'c-purple': '#AF52DE'
+        };
+
+        const batteryFill = document.getElementById('batteryFill');
+        const batteryNub = document.getElementById('batteryNub');
+        const mainToggle = document.getElementById('mainToggle');
+        
+        let isCustomizationOn = false;
+
+        // ── Toggle Logic ──
+        mainToggle.addEventListener('change', function(e) {
+            isCustomizationOn = e.target.checked;
+            updateBatteryColor();
+        });
+
+        function updateBatteryColor() {
+            if (isCustomizationOn) {
+                const activeCircle = document.querySelector('#row3 .color-circle.selected') || document.querySelector('.color-circle.selected');
+                const colorClass = Array.from(activeCircle.classList).find(cls => cls.startsWith('c-'));
+                
+                if(colorClass && colorMap[colorClass]) {
+                    batteryFill.style.backgroundColor = colorMap[colorClass];
+                    batteryNub.style.backgroundColor = colorMap[colorClass];
+                }
+            } else {
+                batteryFill.style.backgroundColor = '#555555';
+                batteryNub.style.backgroundColor = '#555555';
+            }
+        }
+
+        // ── Color Selection Logic ──
+        function setupColorRow(rowId) {
+            const row = document.getElementById(rowId);
+            const circles = row.querySelectorAll('.color-circle');
+            
+            circles.forEach(circle => {
+                circle.addEventListener('click', function() {
+                    circles.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    if (isCustomizationOn) {
+                        updateBatteryColor();
+                    }
+                });
+            });
+        }
+
+        setupColorRow('row1');
+        setupColorRow('row2');
+        setupColorRow('row3');
+        setupColorRow('row4');
+    </script>
+</body>
+</html>
